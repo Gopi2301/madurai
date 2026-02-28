@@ -2,9 +2,13 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
+// Use Vite environment variable `VITE_APP_URL` for production API base URL.
+// If not set, fall back to relative paths so local dev continues to work.
+const BASE_API_URL = (import.meta?.env?.VITE_APP_URL as string) || "";
+
 export const api = {
   getLeaderboard: async () => {
-    const res = await fetch("/api/leaderboard");
+    const res = await fetch(`${BASE_API_URL}/api/leaderboard`);
     return res.json();
   },
   analyzeWasteImage: async (base64Data: string) => {
@@ -82,7 +86,7 @@ export const api = {
     }
   },
   recordScore: async (analysisResult: any, studentName: string) => {
-    const res = await fetch("/api/score", {
+    const res = await fetch(`${BASE_API_URL}/api/score`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...analysisResult, studentName }),
